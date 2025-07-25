@@ -104,7 +104,6 @@ export default function AITrustScorePage() {
               Enter your details below and receive a comprehensive analysis within 24 hours
             </p>
           </div>
-
           <Card className="bg-white/10 backdrop-blur-sm border-purple-600/30 shadow-2xl shadow-orange-500/20">
             <CardHeader>
               <p className="text-purple-200 text-center text-sm">
