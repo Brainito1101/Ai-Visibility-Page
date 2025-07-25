@@ -33,40 +33,39 @@ export default function AITrustScorePage() {
     })
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-   e.preventDefault()
+ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
 
-   // Send data using a hidden form submission to Formsubmit
-   const form = document.createElement("form")
-   form.action = "https://formsubmit.co/accounts@brainito.com" // <-- YOUR EMAIL HERE
-   form.method = "POST"
-   form.style.display = "none"
+  const form = document.createElement("form")
+  form.action = "https://formsubmit.co/accounts@brainito.com"
+  form.method = "POST"
+  form.style.display = "none"
 
-   // Form fields
-   Object.entries(formData).forEach(([key, value]) => {
-     const input = document.createElement("input")
-     input.name = key
-     input.value = value
-     form.appendChild(input)
-   })
+  // Form data fields
+  Object.entries(formData).forEach(([key, value]) => {
+    const input = document.createElement("input")
+    input.name = key
+    input.value = value
+    form.appendChild(input)
+  })
 
-  // ✅ Prevent redirect
+  // ✅ Prevent redirect to FormSubmit confirmation
   const redirect = document.createElement("input")
   redirect.name = "_next"
   redirect.value = "about:blank"
   form.appendChild(redirect)
 
-  // ✅ Disable CAPTCHA
+  // ✅ Disable reCAPTCHA
   const captcha = document.createElement("input")
   captcha.name = "_captcha"
   captcha.value = "false"
   form.appendChild(captcha)
 
-  // Submit the form
+  // Submit form silently
   document.body.appendChild(form)
   form.submit()
 
-  // ✅ Show thank you and reset after 5 seconds
+  // Show thank you message and reset after 5 seconds
   setShowThankYou(true)
   setTimeout(() => {
     setShowThankYou(false)
