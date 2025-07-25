@@ -99,7 +99,7 @@ export default function AITrustScorePage() {
               <BarChart3 className="w-6 h-6 text-white" />
               <span className="text-white font-medium">Free Report</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Get Your Free AI TrustScore Report</h1>
+            <CardTitle className="text-white text-center">Get Your AI TrustScore Report</CardTitle>
             <p className="text-purple-200 text-lg">
               Enter your details below and receive a comprehensive analysis within 24 hours
             </p>
@@ -107,7 +107,6 @@ export default function AITrustScorePage() {
 
           <Card className="bg-white/10 backdrop-blur-sm border-purple-600/30 shadow-2xl shadow-orange-500/20">
             <CardHeader>
-              <CardTitle className="text-white text-center">Get Your AI TrustScore Report</CardTitle>
               <p className="text-purple-200 text-center text-sm">
                 Receive a comprehensive analysis of your AI trustworthiness and visibility
               </p>
