@@ -51,7 +51,7 @@ export default function AITrustScorePage() {
     // Prevent redirect to FormSubmit
     const redirect = document.createElement("input")
     redirect.name = "_next"
-    redirect.value = "https://ai.brainito.com/silent-submit" // dummy URL to avoid their redirect page
+    redirect.value = "https://ai.brainito.com/" // dummy URL to avoid their redirect page
     form.appendChild(redirect)
 
     // Disable CAPTCHA
