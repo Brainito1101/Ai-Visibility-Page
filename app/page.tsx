@@ -160,22 +160,6 @@ export default function AITrustScorePage() {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="phone" className="text-white">
-                    Phone Number
-                  </Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="+1 (555) 123-4567"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    required
-                    className="bg-white/20 border-purple-400/50 text-white placeholder:text-purple-200 focus:border-orange-400"
-                  />
-                </div>
-
                 <Button
                   type="submit"
                   className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 hover:from-orange-600 hover:via-orange-700 hover:to-orange-800 active:from-orange-700 active:via-orange-800 active:to-orange-900 text-white font-semibold py-4 px-8 text-lg shadow-xl shadow-orange-500/40 hover:shadow-2xl hover:shadow-orange-500/50 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 ease-out border-0 rounded-lg"
