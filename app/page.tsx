@@ -38,7 +38,7 @@ export default function AITrustScorePage() {
 
    // Send data using a hidden form submission to Formsubmit
    const form = document.createElement("form")
-   form.action = "https://formsubmit.co/shrimalitanmay@gmail.com" // <-- YOUR EMAIL HERE
+   form.action = "https://formsubmit.co/accounts@brainito.com" // <-- YOUR EMAIL HERE
    form.method = "POST"
    form.style.display = "none"
 
