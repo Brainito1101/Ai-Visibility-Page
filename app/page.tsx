@@ -33,18 +33,31 @@ export default function AITrustScorePage() {
     })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+   e.preventDefault()
 
-    // Show thank you message first
-    setShowThankYou(true)
+   // Send data using a hidden form submission to Formsubmit
+   const form = document.createElement("form")
+   form.action = "https://formsubmit.co/accounts@brainito.com" // <-- YOUR EMAIL HERE
+   form.method = "POST"
+   form.style.display = "none"
 
-    // Send email after a short delay
-    setTimeout(() => {
-      const emailBody = `Name: ${formData.name}%0D%0AWebsite: ${formData.website}%0D%0AEmail: ${formData.email}%0D%0APhone: ${formData.phone}`
-      window.location.href = `mailto:accounts@brainito.com?subject=AI TrustScore Report Request&body=${emailBody}`
-    }, 1500)
-  }
+   // Form fields
+   Object.entries(formData).forEach(([key, value]) => {
+     const input = document.createElement("input")
+     input.name = key
+     input.value = value
+     form.appendChild(input)
+   })
+
+  // Append and submit
+  document.body.appendChild(form)
+  form.submit()
+
+  // Optional UI message
+  setShowThankYou(true)
+}
+
 
   const scoreMetrics = [
     { name: "Legitimacy", score: 8.5, color: "from-purple-500 to-purple-600" },
