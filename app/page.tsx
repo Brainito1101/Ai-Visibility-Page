@@ -50,15 +50,29 @@ export default function AITrustScorePage() {
      form.appendChild(input)
    })
 
-  // Append and submit
+  // ✅ Prevent redirect
+  const redirect = document.createElement("input")
+  redirect.name = "_next"
+  redirect.value = "about:blank"
+  form.appendChild(redirect)
+
+  // ✅ Disable CAPTCHA
+  const captcha = document.createElement("input")
+  captcha.name = "_captcha"
+  captcha.value = "false"
+  form.appendChild(captcha)
+
+  // Submit the form
   document.body.appendChild(form)
   form.submit()
 
-  // Optional UI message
+  // ✅ Show thank you and reset after 5 seconds
   setShowThankYou(true)
+  setTimeout(() => {
+    setShowThankYou(false)
+    setFormData({ name: "", website: "", email: "", phone: "" })
+  }, 5000)
 }
-
-
   const scoreMetrics = [
     { name: "Legitimacy", score: 8.5, color: "from-purple-500 to-purple-600" },
     { name: "Transparency", score: 7.2, color: "from-orange-400 to-orange-500" },
