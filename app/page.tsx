@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,12 +17,13 @@ export default function AITrustScorePage() {
     email: "",
     phone: "",
   })
-
   const [showThankYou, setShowThankYou] = useState(false)
 
-  // Hotjar init
+  // Initialize Hotjar
   useEffect(() => {
-    Hotjar.init(6475273, 6)
+    const siteId = 6475273
+    const hotjarVersion = 6
+    Hotjar.init(siteId, hotjarVersion)
   }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,45 +34,30 @@ export default function AITrustScorePage() {
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+   e.preventDefault()
 
-    const form = document.createElement("form")
-    form.action = "https://formsubmit.co/accounts@brainito.com"
-    form.method = "POST"
-    form.style.display = "none"
+   // Send data using a hidden form submission to Formsubmit
+   const form = document.createElement("form")
+   form.action = "https://formsubmit.co/accounts@brainito.com" // <-- YOUR EMAIL HERE
+   form.method = "POST"
+   form.style.display = "none"
 
-    Object.entries(formData).forEach(([key, value]) => {
-      const input = document.createElement("input")
-      input.name = key
-      input.value = value
-      form.appendChild(input)
-    })
+   // Form fields
+   Object.entries(formData).forEach(([key, value]) => {
+     const input = document.createElement("input")
+     input.name = key
+     input.value = value
+     form.appendChild(input)
+   })
 
-    // Prevent redirect
-    const redirect = document.createElement("input")
-    redirect.name = "_next"
-    redirect.value = "about:blank"
-    form.appendChild(redirect)
+  // Append and submit
+  document.body.appendChild(form)
+  form.submit()
 
-    // Disable CAPTCHA
-    const captcha = document.createElement("input")
-    captcha.name = "_captcha"
-    captcha.value = "false"
-    form.appendChild(captcha)
+  // Optional UI message
+  setShowThankYou(true)
+}
 
-    // Submit form
-    document.body.appendChild(form)
-    form.submit()
-
-    // Show thank-you screen
-    setShowThankYou(true)
-
-    // Auto-reset after 5 seconds
-    setTimeout(() => {
-      setShowThankYou(false)
-      setFormData({ name: "", website: "", email: "", phone: "" })
-    }, 5000)
-  }
 
   const scoreMetrics = [
     { name: "Legitimacy", score: 8.5, color: "from-purple-500 to-purple-600" },
@@ -117,6 +104,7 @@ export default function AITrustScorePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900">
+      {/* Form Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12">
@@ -138,7 +126,9 @@ export default function AITrustScorePage() {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <Label htmlFor="name" className="text-white">Full Name</Label>
+                  <Label htmlFor="name" className="text-white">
+                    Full Name
+                  </Label>
                   <Input
                     id="name"
                     name="name"
@@ -150,8 +140,11 @@ export default function AITrustScorePage() {
                     className="bg-white/20 border-purple-400/50 text-white placeholder:text-purple-200 focus:border-orange-400"
                   />
                 </div>
+
                 <div>
-                  <Label htmlFor="website" className="text-white">Website URL</Label>
+                  <Label htmlFor="website" className="text-white">
+                    Website URL
+                  </Label>
                   <Input
                     id="website"
                     name="website"
@@ -163,8 +156,11 @@ export default function AITrustScorePage() {
                     className="bg-white/20 border-purple-400/50 text-white placeholder:text-purple-200 focus:border-orange-400"
                   />
                 </div>
+
                 <div>
-                  <Label htmlFor="email" className="text-white">Email Address</Label>
+                  <Label htmlFor="email" className="text-white">
+                    Email Address
+                  </Label>
                   <Input
                     id="email"
                     name="email"
@@ -176,12 +172,14 @@ export default function AITrustScorePage() {
                     className="bg-white/20 border-purple-400/50 text-white placeholder:text-purple-200 focus:border-orange-400"
                   />
                 </div>
+
                 <Button
                   type="submit"
                   className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 hover:from-orange-600 hover:via-orange-700 hover:to-orange-800 active:from-orange-700 active:via-orange-800 active:to-orange-900 text-white font-semibold py-4 px-8 text-lg shadow-xl shadow-orange-500/40 hover:shadow-2xl hover:shadow-orange-500/50 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 ease-out border-0 rounded-lg"
                 >
                   Get my AI Trustscore Reports
                 </Button>
+
                 <p className="text-xs text-purple-200 text-center">
                   We'll analyze your digital presence and send your report within 24 hours
                 </p>
@@ -190,6 +188,102 @@ export default function AITrustScorePage() {
           </Card>
         </div>
       </div>
+
+      {/* Sample Report Preview */}
+      <div className="bg-gray-50 py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Sample Report Preview</h2>
+              <p className="text-gray-600">Here's what your AI TrustScore report will look like</p>
+            </div>
+
+            <Card className="mb-8 shadow-2xl shadow-purple-500/20 border-purple-200/50 bg-gradient-to-br from-white to-purple-50/30">
+              <CardContent className="p-8">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 text-white rounded-full text-3xl font-bold mb-4 shadow-lg shadow-purple-500/30">
+                    7.5
+                  </div>
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Shield className="w-5 h-5 text-purple-600" />
+                    <h3 className="text-xl font-bold">AI TrustScore: 7.5 / 10</h3>
+                  </div>
+                  <p className="text-gray-600">Comprehensive analysis of your digital trustworthiness</p>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg mb-4">Score Breakdown</h4>
+                  {scoreMetrics.map((metric, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{metric.name}</span>
+                        <span className="text-sm font-semibold">{metric.score}/10</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                        <div
+                          className={`h-full bg-gradient-to-r ${metric.color} transition-all duration-500 ease-out`}
+                          style={{ width: `${metric.score * 10}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* What's Included Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-center">What's Included in Your Report</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                      <div>
+                        <h4 className="font-semibold">Detailed Score Analysis</h4>
+                        <p className="text-sm text-gray-600">In-depth breakdown of all 8 trust categories</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                      <div>
+                        <h4 className="font-semibold">Competitive Benchmarking</h4>
+                        <p className="text-sm text-gray-600">See how you compare to industry standards</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                      <div>
+                        <h4 className="font-semibold">Actionable Recommendations</h4>
+                        <p className="text-sm text-gray-600">Specific steps to improve your scores</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                      <div>
+                        <h4 className="font-semibold">Implementation Timeline</h4>
+                        <p className="text-sm text-gray-600">Priority roadmap for trust improvements</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-purple-900 py-8">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-purple-200">Get insights into your digital trustworthiness and AI visibility</p>
+          <p className="text-purple-300 text-sm mt-2">Copyright by Brainito.com</p>
+        </div>
+      </footer>
     </div>
   )
 }
