@@ -135,21 +135,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <Label htmlFor="name" className="text-white">
-                    Full Name
-                  </Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="Enter your full name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    className="bg-white/20 border-purple-400/50 text-white placeholder:text-purple-200 focus:border-orange-400"
-                  />
-                </div>
+                
 
                 <div>
   <Label htmlFor="website" className="text-white">
