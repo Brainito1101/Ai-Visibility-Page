@@ -12,7 +12,9 @@ export const metadata: Metadata = {
   title: "Get Your Free AI TrustScore Report | Brainito",
   description:
     "Get a comprehensive analysis of your digital trustworthiness and AI visibility. Discover how your business appears to AI systems and customers with our free AI TrustScore report.",
-    generator: 'v0.dev'
+   generator: 'Brainito',
+  icons: "/favicon.png",
+
 }
 
 export default function RootLayout({
