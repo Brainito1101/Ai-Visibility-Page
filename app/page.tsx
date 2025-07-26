@@ -120,11 +120,11 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 mb-4">
               <BarChart3 className="w-6 h-6 text-white" />
-              <span className="text-white font-medium">Free Report</span>
+              AI Trustscore Report
             </div>
             <CardTitle className="text-white text-center">Get Your AI TrustScore Report</CardTitle>
             <p className="text-purple-200 text-lg">
-              Enter your details below and receive a comprehensive analysis within 24 hours
+              AI already has an opinion about your brand. Want to see it?
             </p>
           </div>
           <Card className="bg-white/10 backdrop-blur-sm border-purple-600/30 shadow-2xl shadow-orange-500/20">
@@ -182,12 +182,10 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                   type="submit"
                   className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 hover:from-orange-600 hover:via-orange-700 hover:to-orange-800 active:from-orange-700 active:via-orange-800 active:to-orange-900 text-white font-semibold py-4 px-8 text-lg shadow-xl shadow-orange-500/40 hover:shadow-2xl hover:shadow-orange-500/50 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 ease-out border-0 rounded-lg"
                 >
-                  Get my AI Trustscore Reports
+                  Show Me What AI Thinks
                 </Button>
 
-                <p className="text-xs text-purple-200 text-center">
-                  We'll analyze your digital presence and send your report within 24 hours
-                </p>
+            
               </form>
             </CardContent>
           </Card>
