@@ -33,45 +33,42 @@ export default function AITrustScorePage() {
     })
   }
 
- const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault()
 
-  const form = document.createElement("form")
-  form.action = "https://formsubmit.co/accounts@brainito.com"
-  form.method = "POST"
-  form.style.display = "none"
+  const payload = {
+    name: formData.name,
+    website: `https://${formData.website.replace(/^https?:\/\//, "")}`,
+    email: formData.email,
+    _captcha: "false",
+  }
 
-  // Form data fields
-  Object.entries(formData).forEach(([key, value]) => {
-    const input = document.createElement("input")
-    input.name = key
-    input.value = value
-    form.appendChild(input)
-  })
+  try {
+    const res = await fetch("https://formsubmit.co/ajax/accounts@brainito.com", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
 
-  // ✅ Prevent redirect to FormSubmit confirmation
-  const redirect = document.createElement("input")
-  redirect.name = "_next"
-  redirect.value = "about:blank"
-  form.appendChild(redirect)
-
-  // ✅ Disable reCAPTCHA
-  const captcha = document.createElement("input")
-  captcha.name = "_captcha"
-  captcha.value = "false"
-  form.appendChild(captcha)
-
-  // Submit form silently
-  document.body.appendChild(form)
-  form.submit()
-
-  // Show thank you message and reset after 5 seconds
-  setShowThankYou(true)
-  setTimeout(() => {
-    setShowThankYou(false)
-    setFormData({ name: "", website: "", email: "", phone: "" })
-  }, 5000)
+    if (res.ok) {
+      setShowThankYou(true)
+      setTimeout(() => {
+        setShowThankYou(false)
+        setFormData({ name: "", website: "", email: "", phone: "" })
+        // ✅ Redirect after 10 seconds
+        window.location.href = "/"
+      }, 10000)
+    } else {
+      alert("Something went wrong. Please try again.")
+    }
+  } catch (error) {
+    console.error("Error:", error)
+    alert("Error submitting form. Please try again.")
+  }
 }
+
   const scoreMetrics = [
     { name: "Legitimacy", score: 8.5, color: "from-purple-500 to-purple-600" },
     { name: "Transparency", score: 7.2, color: "from-orange-400 to-orange-500" },
@@ -155,20 +152,29 @@ export default function AITrustScorePage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="website" className="text-white">
-                    Website URL
-                  </Label>
-                  <Input
-                    id="website"
-                    name="website"
-                    type="url"
-                    placeholder="https://yourwebsite.com"
-                    value={formData.website}
-                    onChange={handleInputChange}
-                    required
-                    className="bg-white/20 border-purple-400/50 text-white placeholder:text-purple-200 focus:border-orange-400"
-                  />
-                </div>
+  <Label htmlFor="website" className="text-white">
+    Website URL
+  </Label>
+  <div className="flex items-center">
+    <span className="px-3 py-2 bg-white/20 border border-purple-400/50 text-white rounded-l-md">https://</span>
+    <Input
+      id="website"
+      name="website"
+      type="text"
+      placeholder="yourdomain.com"
+      value={formData.website.replace(/^https?:\/\//, "")}
+      onChange={(e) =>
+        setFormData({
+          ...formData,
+          website: e.target.value.replace(/^https?:\/\//, ""),
+        })
+      }
+      required
+      className="bg-white/20 border-l-0 border-purple-400/50 text-white placeholder:text-purple-200 focus:border-orange-400 rounded-l-none"
+    />
+  </div>
+</div>
+
 
                 <div>
                   <Label htmlFor="email" className="text-white">
