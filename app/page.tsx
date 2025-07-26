@@ -120,7 +120,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 mb-4">
               <BarChart3 className="w-6 h-6 text-white" />
-              AI Trustscore Report
+              <span className="text-white">AI Trustscore Report</span>
             </div>
             <CardTitle className="text-white text-center">Get Your AI TrustScore Report</CardTitle>
             <p className="text-purple-200 text-lg">
