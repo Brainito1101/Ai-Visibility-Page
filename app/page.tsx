@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Shield, BarChart3, CheckCircle, CheckCircle2 } from "lucide-react"
 import Hotjar from "@hotjar/browser"
+import { Typewriter } from 'react-simple-typewriter'
 
 export default function AITrustScorePage() {
   const [formData, setFormData] = useState({
@@ -18,6 +18,8 @@ export default function AITrustScorePage() {
     phone: "",
   })
   const [showThankYou, setShowThankYou] = useState(false)
+
+
 
   // Initialize Hotjar
   useEffect(() => {
@@ -33,41 +35,41 @@ export default function AITrustScorePage() {
     })
   }
 
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
 
-  const payload = {
-    name: formData.name,
-    website: `https://${formData.website.replace(/^https?:\/\//, "")}`,
-    email: formData.email,
-    _captcha: "false",
-  }
-
-  try {
-    const res = await fetch("https://formsubmit.co/ajax/accounts@brainito.com", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-
-    if (res.ok) {
-      setShowThankYou(true)
-      setTimeout(() => {
-        setShowThankYou(false)
-        setFormData({ name: "", website: "", email: "", phone: "" })
-        // ✅ Redirect after 10 seconds
-        window.location.href = "/"
-      }, 10000)
-    } else {
-      alert("Something went wrong. Please try again.")
+    const payload = {
+      name: formData.name,
+      website: `https://${formData.website.replace(/^https?:\/\//, "")}`,
+      email: formData.email,
+      _captcha: "false",
     }
-  } catch (error) {
-    console.error("Error:", error)
-    alert("Error submitting form. Please try again.")
+
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/accounts@brainito.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (res.ok) {
+        setShowThankYou(true)
+        setTimeout(() => {
+          setShowThankYou(false)
+          setFormData({ name: "", website: "", email: "", phone: "" })
+          // ✅ Redirect after 10 seconds
+          window.location.href = "/"
+        }, 10000)
+      } else {
+        alert("Something went wrong. Please try again.")
+      }
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Error submitting form. Please try again.")
+    }
   }
-}
 
   const scoreMetrics = [
     { name: "Legitimacy", score: 8.5, color: "from-purple-500 to-purple-600" },
@@ -113,57 +115,69 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900">
+    <div className="min-h-screen bg-white">
       {/* Form Section */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-5">
             <div className="inline-flex items-center gap-2 mb-4">
-              <BarChart3 className="w-6 h-6 text-white" />
-              <span className="text-white">AI Trustscore Report</span>
-            </div>
-            <CardTitle className="text-white text-center">Get Your AI TrustScore Report</CardTitle>
-            <p className="text-purple-200 text-lg pt-2 pb-0">
-              AI already has an opinion about your brand. Want to see it?
-            </p>
-          </div>
-          <Card className="bg-white/10 backdrop-blur-sm border-purple-600/30 shadow-2xl shadow-orange-500/20 pt-0">
-            <CardHeader>
-              <p className="text-purple-200 text-center text-sm">
-                Receive a comprehensive analysis of your AI trustworthiness and visibility
-              </p>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                
-
-                <div>
-  <Label htmlFor="website" className="text-white">
-    Website URL
-  </Label>
-  <div className="flex items-center">
-    <span className="px-3 py-2 bg-white/20 border border-purple-400/50 text-white rounded-l-md">https://</span>
-    <Input
-      id="website"
-      name="website"
-      type="text"
-      placeholder="yourdomain.com"
-      value={formData.website.replace(/^https?:\/\//, "")}
-      onChange={(e) =>
-        setFormData({
-          ...formData,
-          website: e.target.value.replace(/^https?:\/\//, ""),
-        })
-      }
-      required
-      className="bg-white/20 border-l-0 border-purple-400/50 text-white placeholder:text-purple-200 focus:border-orange-400 rounded-l-none"
-    />
-  </div>
+              <div className="flex items-center gap-2 animate-bounce">
+  <BarChart3 className="w-6 h-6 text-gray" />
+  <span className="text-gray-800 text-xl">AI Trustscore Report</span>
 </div>
+            </div>
+            <CardTitle className="text-gray text-center">
+              <Typewriter
+                words={[
+                  'People don’t ask Google.',
+                  'They ask AI.. ',
+                  'Wanna see what it thinks?',
+
+                ]}
+                loop={0}
+                cursor
+                cursorStyle="_"
+                typeSpeed={70}
+                deleteSpeed={50}
+                delaySpeed={1500}
+              />
+            </CardTitle>
+
+          </div>
+          
+          <Card className="border border-purple-400/30 shadow-xl rounded-2xl shadow-purple-300">
+            <CardContent className="pt-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Label htmlFor="website" className="text-black font-medium mb-1 block">
+                    Website URL
+                  </Label>
+                  <div className="flex rounded-lg overflow-hidden shadow-sm border border-purple-300 bg-white">
+                    <span className="px-4 flex items-center text-gray-600 bg-white-100 border-r border-purple-300">
+                      https://
+                    </span>
+                    <Input
+                      id="website"
+                      name="website"
+                      type="text"
+                      placeholder="yourdomain.com"
+                      value={formData.website.replace(/^https?:\/\//, "")}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          website: e.target.value.replace(/^https?:\/\//, ""),
+                        })
+                      }
+                      required
+                      className="w-full p-4 text-gray-800 focus:outline-none bg-white"
+                    />
+                  </div>
+                </div>
+
 
 
                 <div>
-                  <Label htmlFor="email" className="text-white">
+                  <Label htmlFor="email" className="text-gray">
                     Email Address
                   </Label>
                   <Input
@@ -174,18 +188,18 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="bg-white/20 border-purple-400/50 text-white placeholder:text-purple-200 focus:border-orange-400"
+                    className="w-full p-4 border border-purple-300 bg-white text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-sm"
                   />
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 hover:from-orange-600 hover:via-orange-700 hover:to-orange-800 active:from-orange-700 active:via-orange-800 active:to-orange-900 text-white font-semibold py-4 px-8 text-lg shadow-xl shadow-orange-500/40 hover:shadow-2xl hover:shadow-orange-500/50 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 ease-out border-0 rounded-lg"
+                  className="w-full bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-800 text-white font-semibold py-4 px-8 text-lg shadow-md shadow-purple-400/40 hover:shadow-lg hover:shadow-purple-500/50 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 ease-out rounded-lg"
                 >
-                  Show Me What AI Thinks
+                  Get AI Trustscore
                 </Button>
 
-            
+
               </form>
             </CardContent>
           </Card>

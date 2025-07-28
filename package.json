@@ -56,6 +56,8 @@
     "react-dom": "^19",
     "react-hook-form": "latest",
     "react-resizable-panels": "latest",
+    "react-simple-typewriter": "^5.0.1",
+    "react-tsparticles": "^2.12.2",
     "recharts": "latest",
     "sonner": "latest",
     "tailwind-merge": "^2.5.5",
