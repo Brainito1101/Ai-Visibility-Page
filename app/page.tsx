@@ -253,6 +253,7 @@ export default function AITrustScorePage() {
                 </div>
               </CardContent>
             </Card>
+            
 
             {/* What's Included Section */}
             <Card>
