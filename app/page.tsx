@@ -85,11 +85,6 @@ export default function AITrustScorePage() {
 
   if (showThankYou) {
     return (
-
-     
-
-
-
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 flex items-center justify-center px-4">
         <Card className="max-w-2xl w-full bg-white/10 backdrop-blur-sm border-purple-600/30 shadow-2xl shadow-orange-500/20">
           <CardContent className="p-12 text-center">
