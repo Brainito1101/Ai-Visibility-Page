@@ -217,7 +217,7 @@ export default function AITrustScorePage() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Sample Report Preview</h2>
-              <p className="text-gray-600">Here's what your AI TrustScore report will look like</p>
+              <p className="text-gray-600 text-sm">Here's what your AI TrustScore report will look like</p>
             </div>
 
             <Card className="mb-8 shadow-2xl shadow-purple-500/20 border-purple-200/50 bg-gradient-to-br from-white to-purple-50/30">
