@@ -28,11 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Head>
-        <link rel="canonical" href="https://ai.brainito.com/" />
-        <meta name="robots" content="index, follow" />
-        <meta name="publisher" content="Brainito" />
-      </Head>
+      
       <body className={inter.className}>
         <Header />
         <Analytics />
