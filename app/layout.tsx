@@ -21,10 +21,11 @@ export const metadata: Metadata = {
   creator: "Brainito",
   publisher: "Brainito",
   icons: "/favicon.png",
+  robots: "index, follow",
   metadataBase: new URL("https://ai.brainito.com"),
   alternates: {
     canonical: "/",
-    
+
   },
 
 
