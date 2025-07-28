@@ -84,6 +84,11 @@ export default function AITrustScorePage() {
 
   if (showThankYou) {
     return (
+
+     
+
+
+
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 flex items-center justify-center px-4">
         <Card className="max-w-2xl w-full bg-white/10 backdrop-blur-sm border-purple-600/30 shadow-2xl shadow-orange-500/20">
           <CardContent className="p-12 text-center">
@@ -207,7 +212,7 @@ export default function AITrustScorePage() {
       </div>
 
       {/* Sample Report Preview */}
-      <div className="bg-gray-50 py-16">
+      <div className="bg-gray-50 py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
