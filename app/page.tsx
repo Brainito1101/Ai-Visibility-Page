@@ -123,7 +123,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               <span className="text-white">AI Trustscore Report</span>
             </div>
             <CardTitle className="text-white text-center">Get Your AI TrustScore Report</CardTitle>
-            <p className="text-purple-200 text-lg">
+            <p className="text-purple-200 text-lg pt-2 pb-0">
               AI already has an opinion about your brand. Want to see it?
             </p>
           </div>
