@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://ai.brainito.com/sitemap.xml

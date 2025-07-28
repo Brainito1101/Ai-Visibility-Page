@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import type React from "react"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -122,13 +123,13 @@ export default function AITrustScorePage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Form Section */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-5 min-h-[40vh]">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-5">
             <div className="inline-flex items-center gap-2 mb-4">
               <div className="flex items-center gap-2 animate-bounce">
   <BarChart3 className="w-6 h-6 text-gray" />
-  <span className="text-gray-800 text-xl">AI Trustscore Report</span>
+  <h1 className="text-gray-800 text-xl">AI Trustscore Report</h1>
 </div>
             </div>
             <CardTitle className="text-gray text-center">
@@ -217,7 +218,7 @@ export default function AITrustScorePage() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Sample Report Preview</h2>
-              <p className="text-gray-600">Here's what your AI TrustScore report will look like</p>
+              <p className="text-gray-600 text-sm">Here's what your AI TrustScore report will look like</p>
             </div>
 
             <Card className="mb-8 shadow-2xl shadow-purple-500/20 border-purple-200/50 bg-gradient-to-br from-white to-purple-50/30">
@@ -256,7 +257,7 @@ export default function AITrustScorePage() {
             {/* What's Included Section */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-center">What's Included in Your Report</CardTitle>
+                <CardTitle className="text-center"><h2>What's Included in Your Report</h2></CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-6">
@@ -303,7 +304,7 @@ export default function AITrustScorePage() {
       <footer className="bg-purple-900 py-8">
         <div className="container mx-auto px-4 text-center">
           <p className="text-purple-200">Get insights into your digital trustworthiness and AI visibility</p>
-          <p className="text-purple-300 text-sm mt-2">Copyright by Brainito.com</p>
+          <p className="text-purple-300 text-sm mt-2">Copyright by <Link href="https://www.brainito.com/">Brainito.com</Link></p>
         </div>
       </footer>
     </div>
