@@ -117,7 +117,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       {/* Form Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-5">
             <div className="inline-flex items-center gap-2 mb-4">
               <BarChart3 className="w-6 h-6 text-white" />
               <span className="text-white">AI Trustscore Report</span>
