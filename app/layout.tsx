@@ -24,6 +24,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://ai.brainito.com"),
   alternates: {
     canonical: "/",
+    
   },
 
 
