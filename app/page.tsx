@@ -127,7 +127,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               AI already has an opinion about your brand. Want to see it?
             </p>
           </div>
-          <Card className="bg-white/10 backdrop-blur-sm border-purple-600/30 shadow-2xl shadow-orange-500/20">
+          <Card className="bg-white/10 backdrop-blur-sm border-purple-600/30 shadow-2xl shadow-orange-500/20 pt-0">
             <CardHeader>
               <p className="text-purple-200 text-center text-sm">
                 Receive a comprehensive analysis of your AI trustworthiness and visibility
