@@ -16,8 +16,16 @@ export const metadata: Metadata = {
   description:
     "Get a comprehensive analysis of your digital trustworthiness and AI visibility. Discover how your business appears to AI systems and customers with our free AI TrustScore report.", 
     generator: 'Brainito',
-  
+  keywords: ["AI TrustScore", "AI Visibility", "Digital Trust", "Brainito Report", "Business Trust Analysis"], 
+  authors: [{ name: "Brainito Team" }],
+  creator: "Brainito",
+  publisher: "Brainito",
   icons: "/favicon.png",
+  metadataBase: new URL("https://ai.brainito.com"),
+  alternates: {
+    canonical: "/",
+  },
+
 
 }
 
@@ -28,11 +36,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Head>
-        <link rel="canonical" href="https://ai.brainito.com/" />
-        <meta name="robots" content="index, follow" />
-        <meta name="publisher" content="Brainito" />
-      </Head>
       <body className={inter.className}>
         <Header />
         <Analytics />
