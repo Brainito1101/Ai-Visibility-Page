@@ -1,5 +1,9 @@
-"use client"
+//app/page.tsx
 
+
+
+"use client"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import type React from "react"
 import { useState, useEffect } from "react"
@@ -7,16 +11,17 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Shield, BarChart3, CheckCircle, CheckCircle2 } from "lucide-react"
+import { Shield, BarChart3, CheckCircle, CheckCircle2, Router } from "lucide-react"
 import Hotjar from "@hotjar/browser"
 import { Typewriter } from 'react-simple-typewriter'
 
 export default function AITrustScorePage() {
+  const router = useRouter()
+  const [result, setResult] = useState("")  // For AI scores
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
-    name: "",
+    
     website: "",
-    email: "",
-    phone: "",
   })
   const [showThankYou, setShowThankYou] = useState(false)
 
@@ -36,41 +41,54 @@ export default function AITrustScorePage() {
     })
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
+  setLoading(true)
+  setShowThankYou(false)
 
-    const payload = {
-      name: formData.name,
-      website: `https://${formData.website.replace(/^https?:\/\//, "")}`,
-      email: formData.email,
-      _captcha: "false",
+  const cleanedURL = `https://${formData.website.replace(/^https?:\/\//, "")}`
+
+  try {
+    const res = await fetch("https://ai-report-backend-vdvj.onrender.com/api/analyze/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ website: cleanedURL }),
+    })
+
+    const data = await res.json()
+
+    if (data.result) {
+      // Encode all the data for URL parameters
+      const encodedBreakdown = encodeURIComponent(JSON.stringify(data.breakdown || []))
+      const encodedSummary = encodeURIComponent(data.summary || "")
+      const encodedStrengths = encodeURIComponent(JSON.stringify(data.key_strengths || []))
+      const encodedImprovements = encodeURIComponent(JSON.stringify(data.areas_for_improvement || []))
+      
+      // Build the URL with all parameters including analysis_id
+      const resultUrl = `/ai-trustscore/result?` + 
+        `analysis_id=${data.analysis_id}&` +
+        `score=${data.score}&` +
+        `breakdown=${encodedBreakdown}&` +
+        `summary=${encodedSummary}&` +
+        `strengths=${encodedStrengths}&` +
+        `improvements=${encodedImprovements}&` +
+        `ai_visibility_score=${data.ai_visibility_score || 7.0}&` +
+        `ai_visibility_notes=${encodeURIComponent(data.ai_visibility_notes || "")}`
+      
+      router.push(resultUrl)
+    } else {
+      alert("Something went wrong.")
     }
-
-    try {
-      const res = await fetch("https://formsubmit.co/ajax/accounts@brainito.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-
-      if (res.ok) {
-        setShowThankYou(true)
-        setTimeout(() => {
-          setShowThankYou(false)
-          setFormData({ name: "", website: "", email: "", phone: "" })
-          // ✅ Redirect after 10 seconds
-          window.location.href = "/"
-        }, 10000)
-      } else {
-        alert("Something went wrong. Please try again.")
-      }
-    } catch (error) {
-      console.error("Error:", error)
-      alert("Error submitting form. Please try again.")
-    }
+  } catch (error) {
+    console.error("Error:", error)
+    alert("Server error. Please try again later.")
+  } finally {
+    setLoading(false)
   }
+}
+
 
   const scoreMetrics = [
     { name: "Legitimacy", score: 8.5, color: "from-purple-500 to-purple-600" },
@@ -98,10 +116,10 @@ export default function AITrustScorePage() {
               </p>
             </div>
             <div className="bg-white/5 rounded-lg p-6 border border-purple-400/20">
-              <p className="text-purple-200 text-sm">
-                Your AI TrustScore report will be delivered to{" "}
-                <span className="text-white font-semibold">{formData.email}</span>
-              </p>
+              <p className="text-white whitespace-pre-wrap text-left text-sm mt-4">
+  <strong>AI Analysis:</strong><br />
+  {result}
+</p>
             </div>
             <Button
               onClick={() => setShowThankYou(false)}
@@ -173,24 +191,6 @@ export default function AITrustScorePage() {
                       className="w-full p-4 text-gray-800 focus:outline-none bg-white"
                     />
                   </div>
-                </div>
-
-
-
-                <div>
-                  <Label htmlFor="email" className="text-gray">
-                    Email Address
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="you@email.com"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full p-4 border border-purple-300 bg-white text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-sm"
-                  />
                 </div>
 
                 <Button
