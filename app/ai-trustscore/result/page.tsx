@@ -5,9 +5,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { useState } from "react"
+import { useState, Suspense } from "react"
 
-export default function ResultPage() {
+// Loading component for Suspense
+function LoadingSpinner() {
+  return (
+    <div className="bg-white min-h-screen py-10 px-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <span className="ml-3 text-gray-600">Loading your results...</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Main component that uses useSearchParams
+function ResultContent() {
   const params = useSearchParams()
   const analysisId = params.get("analysis_id")
   const score = params.get("score") || "7.5"
@@ -65,7 +80,7 @@ export default function ResultPage() {
     setIsSubmitting(true)
 
     try {
-      const res = await fetch("https://ai-report-backend-vdvj.onrender.com/api/request-report/", {
+      const res = await fetch("http://127.0.0.1:8000/api/request-report/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -229,5 +244,14 @@ export default function ResultPage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+// Main exported component with Suspense wrapper
+export default function ResultPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <ResultContent />
+    </Suspense>
   )
 }
