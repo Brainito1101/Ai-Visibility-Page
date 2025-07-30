@@ -8,13 +8,12 @@ import { Label } from "@/components/ui/label"
 import { useState, useEffect, Suspense } from "react"
 
 // Animated Score Component with Progress Bar
-function AnimatedScoreWithBar({ targetScore, name, getScoreColor, duration = 6000, holdDuration = 3000, resetDuration = 2500 }) {
+function AnimatedScoreWithBar({ targetScore, name, getScoreColor, duration = 6000 }) {
   const [currentScore, setCurrentScore] = useState(0);
-  const [isResetting, setIsResetting] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     let animationFrame;
-    let timeoutId;
 
     const animate = () => {
       const startTime = Date.now();
@@ -23,7 +22,7 @@ function AnimatedScoreWithBar({ targetScore, name, getScoreColor, duration = 600
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        // Very slow, linear progression for better synchronization
+        // Very slow, smooth progression
         const easeInOutQuad = progress < 0.5 
           ? 2 * progress * progress 
           : 1 - Math.pow(-2 * progress + 2, 2) / 2;
@@ -34,33 +33,9 @@ function AnimatedScoreWithBar({ targetScore, name, getScoreColor, duration = 600
         if (progress < 1) {
           animationFrame = requestAnimationFrame(updateScore);
         } else {
-          // Hold at target score for a longer moment
-          timeoutId = setTimeout(() => {
-            // Start reset animation
-            setIsResetting(true);
-            const resetStartTime = Date.now();
-            
-            const resetAnimation = () => {
-              const resetElapsed = Date.now() - resetStartTime;
-              const resetProgress = Math.min(resetElapsed / resetDuration, 1);
-              
-              // Very slow reset animation
-              const easeInQuad = resetProgress * resetProgress;
-              const newScore = targetScore * (1 - easeInQuad);
-              
-              setCurrentScore(newScore);
-              
-              if (resetProgress < 1) {
-                animationFrame = requestAnimationFrame(resetAnimation);
-              } else {
-                setIsResetting(false);
-                // Restart animation after reset completes
-                setTimeout(animate, 800);
-              }
-            };
-            
-            resetAnimation();
-          }, holdDuration);
+          // Animation completed - set final score and mark as completed
+          setCurrentScore(targetScore);
+          setIsCompleted(true);
         }
       };
       
@@ -71,9 +46,8 @@ function AnimatedScoreWithBar({ targetScore, name, getScoreColor, duration = 600
 
     return () => {
       if (animationFrame) cancelAnimationFrame(animationFrame);
-      if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [targetScore, duration, holdDuration, resetDuration]);
+  }, [targetScore, duration]);
 
   return (
     <div className="space-y-2">
@@ -85,13 +59,41 @@ function AnimatedScoreWithBar({ targetScore, name, getScoreColor, duration = 600
       </div>
       <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
         <div
-          className={`h-full bg-gradient-to-r ${getScoreColor(currentScore)} transition-none`}
+          className={`h-full bg-gradient-to-r ${getScoreColor(currentScore)} transition-none relative`}
           style={{ 
             width: `${currentScore * 10}%`,
-            transition: 'none' // Remove CSS transition to rely purely on JS animation for perfect sync
+            transition: 'none',
+            // Add subtle shining effect when completed
+            ...(isCompleted && {
+              background: `linear-gradient(90deg, 
+                ${getScoreColor(currentScore).includes('green') ? '#10b981, #059669' : 
+                  getScoreColor(currentScore).includes('orange') ? '#f59e0b, #d97706' : 
+                  '#ef4444, #dc2626'}, 
+                 
+                ${getScoreColor(currentScore).includes('green') ? '#10b981, #059669' : 
+                  getScoreColor(currentScore).includes('orange') ? '#f59e0b, #d97706' : 
+                  '#ef4444, #dc2626'})`,
+              backgroundSize: '300% 100%',
+              animation: 'subtleShine 15s ease-in-out infinite'
+            })
           }}
         />
       </div>
+      
+      {/* Add CSS animation for subtle shining effect */}
+      <style jsx>{`
+        @keyframes subtleShine {
+          0% {
+            background-position: -300% 0;
+          }
+          50% {
+            background-position: 300% 0;
+          }
+          100% {
+            background-position: -300% 0;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -228,8 +230,6 @@ function ResultContent() {
                   targetScore={metric.score}
                   getScoreColor={getScoreColor}
                   duration={6000}
-                  holdDuration={3000}
-                  resetDuration={2500}
                 />
               ))}
             </div>
