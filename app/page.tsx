@@ -171,7 +171,7 @@ export default function AITrustScorePage() {
             <div className="inline-flex items-center gap-2 mb-4">
               <div className="flex items-center gap-2 animate-bounce">
                 <BarChart3 className="w-6 h-6 text-gray" />
-                <h1 className="text-gray-800 text-xl">AI Trustscore Report</h1>
+                <h1 className="text-gray-800 text-xl">Ai Visibility Report</h1>
               </div>
             </div>
             <CardTitle className="text-gray text-center">
