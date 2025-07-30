@@ -1,7 +1,5 @@
 //app/page.tsx
 
-
-
 "use client"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -11,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Shield, BarChart3, CheckCircle, CheckCircle2, Router } from "lucide-react"
+import { Shield, BarChart3, CheckCircle, CheckCircle2, Router, Loader2 } from "lucide-react"
 import Hotjar from "@hotjar/browser"
 import { Typewriter } from 'react-simple-typewriter'
 
@@ -20,12 +18,9 @@ export default function AITrustScorePage() {
   const [result, setResult] = useState("")  // For AI scores
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
-    
     website: "",
   })
   const [showThankYou, setShowThankYou] = useState(false)
-
-
 
   // Initialize Hotjar
   useEffect(() => {
@@ -89,7 +84,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   }
 }
 
-
   const scoreMetrics = [
     { name: "Legitimacy", score: 8.5, color: "from-purple-500 to-purple-600" },
     { name: "Transparency", score: 7.2, color: "from-orange-400 to-orange-500" },
@@ -100,6 +94,47 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     { name: "Website Credibility", score: 8.7, color: "from-purple-500 to-purple-600" },
     { name: "Trusted Platforms", score: 9.1, color: "from-purple-600 to-purple-800" },
   ]
+
+  // Loading Screen Component
+  const LoadingScreen = () => (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-md w-full mx-4 text-center">
+        <div className="mb-6">
+          {/* Animated Spinner */}
+          <div className="relative inline-flex items-center justify-center">
+            <div className="w-16 h-16 border-4 border-purple-200 rounded-full"></div>
+            <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin absolute"></div>
+            <Shield className="w-6 h-6 text-purple-600 absolute" />
+          </div>
+        </div>
+        
+        <h3 className="text-xl font-bold text-gray-900 mb-2">Analyzing Your Website</h3>
+        <p className="text-gray-600 mb-4">AI is evaluating your digital trustworthiness...</p>
+        
+        {/* Progress Steps */}
+        <div className="space-y-3 text-left">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse"></div>
+            <span className="text-sm text-gray-700">Scanning website structure</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-300"></div>
+            <span className="text-sm text-gray-700">Analyzing trust signals</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-purple-300 rounded-full animate-pulse delay-700"></div>
+            <span className="text-sm text-gray-700">Generating trust score</span>
+          </div>
+        </div>
+        
+        <div className="mt-6 p-3 bg-purple-50 rounded-lg">
+          <p className="text-xs text-purple-700">
+            <span className="font-semibold">Tip:</span> This analysis typically takes 30-60 seconds
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 
   if (showThankYou) {
     return (
@@ -117,9 +152,9 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             </div>
             <div className="bg-white/5 rounded-lg p-6 border border-purple-400/20">
               <p className="text-white whitespace-pre-wrap text-left text-sm mt-4">
-  <strong>AI Analysis:</strong><br />
-  {result}
-</p>
+                <strong>AI Analysis:</strong><br />
+                {result}
+              </p>
             </div>
             <Button
               onClick={() => setShowThankYou(false)}
@@ -135,23 +170,25 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Loading Screen Overlay */}
+      {loading && <LoadingScreen />}
+      
       {/* Form Section */}
       <div className="container mx-auto px-4 py-5 min-h-[40vh]">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-5">
             <div className="inline-flex items-center gap-2 mb-4">
               <div className="flex items-center gap-2 animate-bounce">
-  <BarChart3 className="w-6 h-6 text-gray" />
-  <h1 className="text-gray-800 text-xl">AI Trustscore Report</h1>
-</div>
+                <BarChart3 className="w-6 h-6 text-gray" />
+                <h1 className="text-gray-800 text-xl">AI Trustscore Report</h1>
+              </div>
             </div>
             <CardTitle className="text-gray text-center">
               <Typewriter
                 words={[
-                  'People don’t ask Google.',
+                  'People don't ask Google.',
                   'They ask AI.. ',
                   'Wanna see what it thinks?',
-
                 ]}
                 loop={0}
                 cursor
@@ -161,7 +198,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                 delaySpeed={1500}
               />
             </CardTitle>
-
           </div>
           
           <Card className="border border-purple-400/30 shadow-xl rounded-2xl shadow-purple-300">
@@ -188,19 +224,26 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                         })
                       }
                       required
-                      className="w-full p-4 text-gray-800 focus:outline-none bg-white"
+                      disabled={loading}
+                      className="w-full p-4 text-gray-800 focus:outline-none bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-800 text-white font-semibold py-4 px-8 text-lg shadow-md shadow-purple-400/40 hover:shadow-lg hover:shadow-purple-500/50 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 ease-out rounded-lg"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 hover:from-purple-700 hover:via-purple-800 hover:to-indigo-800 disabled:from-gray-400 disabled:via-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-semibold py-4 px-8 text-lg shadow-md shadow-purple-400/40 hover:shadow-lg hover:shadow-purple-500/50 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 ease-out rounded-lg disabled:transform-none disabled:shadow-none"
                 >
-                  Get AI Trustscore
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Analyzing...
+                    </div>
+                  ) : (
+                    "Get AI Trustscore"
+                  )}
                 </Button>
-
-
               </form>
             </CardContent>
           </Card>
@@ -248,7 +291,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                 </div>
               </CardContent>
             </Card>
-
 
             {/* What's Included Section */}
             <Card>
