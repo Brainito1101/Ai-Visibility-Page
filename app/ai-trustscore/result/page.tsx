@@ -5,7 +5,96 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { useState, Suspense } from "react"
+import { useState, useEffect, Suspense } from "react"
+
+// Animated Score Component with Progress Bar
+function AnimatedScoreWithBar({ targetScore, name, getScoreColor, duration = 6000, holdDuration = 3000, resetDuration = 2500 }) {
+  const [currentScore, setCurrentScore] = useState(0);
+  const [isResetting, setIsResetting] = useState(false);
+
+  useEffect(() => {
+    let animationFrame;
+    let timeoutId;
+
+    const animate = () => {
+      const startTime = Date.now();
+      
+      const updateScore = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Very slow, linear progression for better synchronization
+        const easeInOutQuad = progress < 0.5 
+          ? 2 * progress * progress 
+          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        
+        const newScore = easeInOutQuad * targetScore;
+        setCurrentScore(newScore);
+        
+        if (progress < 1) {
+          animationFrame = requestAnimationFrame(updateScore);
+        } else {
+          // Hold at target score for a longer moment
+          timeoutId = setTimeout(() => {
+            // Start reset animation
+            setIsResetting(true);
+            const resetStartTime = Date.now();
+            
+            const resetAnimation = () => {
+              const resetElapsed = Date.now() - resetStartTime;
+              const resetProgress = Math.min(resetElapsed / resetDuration, 1);
+              
+              // Very slow reset animation
+              const easeInQuad = resetProgress * resetProgress;
+              const newScore = targetScore * (1 - easeInQuad);
+              
+              setCurrentScore(newScore);
+              
+              if (resetProgress < 1) {
+                animationFrame = requestAnimationFrame(resetAnimation);
+              } else {
+                setIsResetting(false);
+                // Restart animation after reset completes
+                setTimeout(animate, 800);
+              }
+            };
+            
+            resetAnimation();
+          }, holdDuration);
+        }
+      };
+      
+      updateScore();
+    };
+
+    animate();
+
+    return () => {
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [targetScore, duration, holdDuration, resetDuration]);
+
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between items-center">
+        <span className="font-medium">{name}</span>
+        <span className="text-sm font-semibold tabular-nums">
+          {currentScore.toFixed(1)}/10
+        </span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+        <div
+          className={`h-full bg-gradient-to-r ${getScoreColor(currentScore)} transition-none`}
+          style={{ 
+            width: `${currentScore * 10}%`,
+            transition: 'none' // Remove CSS transition to rely purely on JS animation for perfect sync
+          }}
+        />
+      </div>
+    </div>
+  );
+}
 
 // Loading component for Suspense
 function LoadingSpinner() {
@@ -133,44 +222,54 @@ function ResultContent() {
             <div className="space-y-4">
               <h4 className="font-semibold text-lg mb-4">Score Breakdown</h4>
               {breakdown.map((metric, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">{metric.name}</span>
-                    <span className="text-sm font-semibold">{metric.score}/10</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                    <div
-                      className={`h-full bg-gradient-to-r ${getScoreColor(metric.score)} transition-all duration-500 ease-out`}
-                      style={{ width: `${metric.score * 10}%` }}
-                    />
-                  </div>
-                </div>
+                <AnimatedScoreWithBar
+                  key={index}
+                  name={metric.name}
+                  targetScore={metric.score}
+                  getScoreColor={getScoreColor}
+                  duration={6000}
+                  holdDuration={3000}
+                  resetDuration={2500}
+                />
               ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* AI Visibility Score */}
-        <Card className="mb-8 shadow-lg border-blue-200/50 bg-gradient-to-br from-white to-blue-50/30">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full">
-                  <Eye className="w-6 h-6" />
+        {/* What's Included Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-center"><h2>What's Included in Your Report</h2></CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                  <div>
+                    <h4 className="font-semibold">Detailed Score Analysis</h4>
+                    <p className="text-sm text-gray-600">In-depth breakdown of all 8 trust categories</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold">AI Visibility Score</h3>
-                  <p className="text-sm text-gray-600">How well AI systems can understand your website</p>
-                </div>
+                
               </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-blue-600">{aiVisibilityScore}/10</div>
-                <div className="text-sm text-gray-600">{getScoreText(parseFloat(aiVisibilityScore))}</div>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                  <div>
+                    <h4 className="font-semibold">Actionable Recommendations</h4>
+                    <p className="text-sm text-gray-600">Specific steps to improve your scores</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                  <div>
+                    <h4 className="font-semibold">Implementation Timeline</h4>
+                    <p className="text-sm text-gray-600">Priority roadmap for trust improvements</p>
+                  </div>
+                </div>
               </div>
             </div>
-            {aiVisibilityNotes && (
-              <p className="text-gray-700 bg-blue-50 p-3 rounded-lg">{aiVisibilityNotes}</p>
-            )}
           </CardContent>
         </Card>
 
