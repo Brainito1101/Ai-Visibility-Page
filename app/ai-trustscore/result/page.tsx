@@ -171,7 +171,7 @@ function ResultContent() {
     setIsSubmitting(true)
 
     try {
-      const res = await fetch("http://54.91.150.79/api/request-report/", {
+      const res = await fetch("https://ai-report-backend-vdvj.onrender.com/api/request-report/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
