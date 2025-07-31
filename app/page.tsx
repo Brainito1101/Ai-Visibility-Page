@@ -338,7 +338,7 @@ export default function AITrustScorePage() {
         </div>
       </div>
 
-      <footer className="bg-purple-900 py-8 mt-auto">
+      <footer className="bg-purple-900 py-2 mt-auto">
         <div className="container mx-auto px-4 text-center">
           <p className="text-purple-200">Get insights into your digital trustworthiness and AI visibility</p>
           <p className="text-purple-300 text-sm mt-2">Copyright by <Link href="https://www.brainito.com/">Brainito.com</Link></p>
