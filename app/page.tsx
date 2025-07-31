@@ -1,339 +1,329 @@
 "use client"
-import { useSearchParams } from "next/navigation"
-import { Shield, CheckCircle, TrendingUp, AlertTriangle, Eye, Award } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import type React from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useState, useEffect, Suspense } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Shield, BarChart3, CheckCircle, CheckCircle2, Loader2 } from "lucide-react"
+import Hotjar from "@hotjar/browser"
+import { Typewriter } from "react-simple-typewriter"
 
-// Animated Score Component with Progress Bar
-function AnimatedScoreWithBar({ targetScore, name, getScoreColor, duration = 6000 }) {
-  const [currentScore, setCurrentScore] = useState(0);
-  const [isCompleted, setIsCompleted] = useState(false);
+// ✅ Redesigned LoadingScreen Component
+const LoadingScreen = () => {
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    let animationFrame;
-
-    const animate = () => {
-      const startTime = Date.now();
-      
-      const updateScore = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        // Very slow, smooth progression
-        const easeInOutQuad = progress < 0.5 
-          ? 2 * progress * progress 
-          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-        
-        const newScore = easeInOutQuad * targetScore;
-        setCurrentScore(newScore);
-        
-        if (progress < 1) {
-          animationFrame = requestAnimationFrame(updateScore);
-        } else {
-          // Animation completed - set final score and mark as completed
-          setCurrentScore(targetScore);
-          setIsCompleted(true);
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 90) {
+          clearInterval(interval)
+          return 90
         }
-      };
-      
-      updateScore();
-    };
+        return prev + Math.floor(Math.random() * 8) + 3
+      })
+    }, 500)
 
-    animate();
+    return () => clearInterval(interval)
+  }, [])
 
-    return () => {
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-    };
-  }, [targetScore, duration]);
+  const getStatus = () => {
+    if (progress < 30) return "Scanning website structure..."
+    if (progress < 70) return "Analyzing trust signals..."
+    if (progress < 90) return "Generating trust score..."
+    return "Finalizing..."
+  }
 
   return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <span className="font-medium">{name}</span>
-        <span className="text-sm font-semibold tabular-nums">
-          {currentScore.toFixed(1)}/10
-        </span>
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-        <div
-          className={`h-full bg-gradient-to-r ${getScoreColor(currentScore)} transition-none relative`}
-          style={{ 
-            width: `${currentScore * 10}%`,
-            transition: 'none',
-            // Add subtle shining effect when completed
-            ...(isCompleted && {
-              background: `linear-gradient(90deg, 
-                ${getScoreColor(currentScore).includes('green') ? '#10b981, #059669' : 
-                  getScoreColor(currentScore).includes('orange') ? '#f59e0b, #d97706' : 
-                  '#ef4444, #dc2626'}, 
-                 
-                ${getScoreColor(currentScore).includes('green') ? '#10b981, #059669' : 
-                  getScoreColor(currentScore).includes('orange') ? '#f59e0b, #d97706' : 
-                  '#ef4444, #dc2626'})`,
-              backgroundSize: '300% 100%',
-              animation: 'subtleShine 15s ease-in-out infinite'
-            })
-          }}
-        />
-      </div>
-      
-      {/* Add CSS animation for subtle shining effect */}
-      <style jsx>{`
-        @keyframes subtleShine {
-          0% {
-            background-position: -300% 0;
-          }
-          50% {
-            background-position: 300% 0;
-          }
-          100% {
-            background-position: -300% 0;
-          }
-        }
-      `}</style>
-    </div>
-  );
-}
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-md w-full mx-4 text-center animate-fade-in">
+        <div className="mb-6">
+          <div className="inline-flex items-center justify-center relative mb-4">
+            <Shield className="w-10 h-10 text-purple-600 animate-bounce" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-1">Analyzing Your Website</h3>
+          <p className="text-gray-600 text-sm">{getStatus()}</p>
+        </div>
 
-// Loading component for Suspense
-function LoadingSpinner() {
-  return (
-    <div className="bg-white min-h-screen py-10 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-          <span className="ml-3 text-gray-600">Loading your results...</span>
+        <div className="w-full bg-purple-100 rounded-full h-4 mb-4 overflow-hidden">
+          <div
+            className="bg-purple-600 h-full transition-all duration-500 ease-in-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <p className="text-sm text-gray-500 mb-4">{progress}% Complete</p>
+
+        <div className="text-xs text-purple-700 bg-purple-50 p-2 rounded-md">
+          <span className="font-semibold">Tip:</span> This analysis typically takes 30-60 seconds
         </div>
       </div>
     </div>
   )
 }
 
-// Main component that uses useSearchParams
-function ResultContent() {
-  const params = useSearchParams()
-  const analysisId = params.get("analysis_id")
-  const score = params.get("score") || "7.5"
-  const breakdownRaw = params.get("breakdown")
-  const summary = params.get("summary") || ""
-  const strengthsRaw = params.get("strengths")
-  const improvementsRaw = params.get("improvements")
-  const aiVisibilityScore = params.get("ai_visibility_score") || "7.0"
-  const aiVisibilityNotes = params.get("ai_visibility_notes") || ""
-  
-  const [formData, setFormData] = useState({ name: "", email: "" })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitSuccess, setSubmitSuccess] = useState(false)
+export default function AITrustScorePage() {
+  const router = useRouter()
+  const [result, setResult] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({ website: "" })
+  const [showThankYou, setShowThankYou] = useState(false)
 
-  const breakdown = breakdownRaw
-    ? JSON.parse(decodeURIComponent(breakdownRaw))
-    : [
-        { name: "Legitimacy", score: 8.5 },
-        { name: "Transparency", score: 7.2 },
-        { name: "Customer Feedback", score: 6.8 },
-        { name: "Service Quality", score: 8.1 },
-        { name: "Responsiveness", score: 7.9 },
-        { name: "Refund Policies", score: 6.5 },
-        { name: "Website Credibility", score: 8.7 },
-        { name: "Trusted Platforms", score: 9.1 },
-      ]
+  useEffect(() => {
+    Hotjar.init(6475273, 6)
+  }, [])
 
-  const keyStrengths = strengthsRaw 
-    ? JSON.parse(decodeURIComponent(strengthsRaw))
-    : ["Strong online presence", "Good customer engagement", "Professional website design"]
-
-  const areasForImprovement = improvementsRaw
-    ? JSON.parse(decodeURIComponent(improvementsRaw))
-    : ["Improve customer review visibility", "Enhance transparency", "Strengthen refund policies"]
-
-  const getScoreColor = (score) => {
-    if (score >= 8) return "from-green-500 to-green-600"
-    if (score >= 6) return "from-orange-400 to-orange-500"
-    return "from-red-400 to-red-500"
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const getScoreText = (score) => {
-    if (score >= 8) return "Excellent"
-    if (score >= 6) return "Good"
-    return "Needs Improvement"
-  }
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!analysisId) {
-      alert("Analysis ID is missing. Please try again.")
-      return
-    }
+    setLoading(true)
+    setShowThankYou(false)
 
-    setIsSubmitting(true)
+    const cleanedURL = `https://${formData.website.replace(/^https?:\/\//, "")}`
 
     try {
-      const res = await fetch("https://ai-report-backend-vdvj.onrender.com/api/request-report/", {
+      const res = await fetch("https://ai-report-backend-vdvj.onrender.com/api/analyze/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          analysis_id: analysisId,
-          name: formData.name,
-          email: formData.email,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ website: cleanedURL }),
       })
 
       const data = await res.json()
 
-      if (data.success) {
-        setSubmitSuccess(true)
-        setFormData({ name: "", email: "" })
+      if (data.result) {
+        const encodedBreakdown = encodeURIComponent(JSON.stringify(data.breakdown || []))
+        const encodedSummary = encodeURIComponent(data.summary || "")
+        const encodedStrengths = encodeURIComponent(JSON.stringify(data.key_strengths || []))
+        const encodedImprovements = encodeURIComponent(JSON.stringify(data.areas_for_improvement || []))
+
+        const resultUrl = `/ai-trustscore/result?` +
+          `analysis_id=${data.analysis_id}&` +
+          `score=${data.score}&` +
+          `breakdown=${encodedBreakdown}&` +
+          `summary=${encodedSummary}&` +
+          `strengths=${encodedStrengths}&` +
+          `improvements=${encodedImprovements}&` +
+          `ai_visibility_score=${data.ai_visibility_score || 7.0}&` +
+          `ai_visibility_notes=${encodeURIComponent(data.ai_visibility_notes || "")}`
+
+        router.push(resultUrl)
       } else {
-        alert(data.error || "Failed to submit request. Please try again.")
+        alert("Something went wrong.")
       }
     } catch (error) {
       console.error("Error:", error)
-      alert("Network error. Please try again later.")
+      alert("Server error. Please try again later.")
     } finally {
-      setIsSubmitting(false)
+      setLoading(false)
     }
   }
 
-  return (
-    <div className="bg-white min-h-screen py-10 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Main Score Card */}
-        <Card className="mb-8 shadow-2xl shadow-purple-500/20 border-purple-200/50 bg-gradient-to-br from-white to-purple-50/30">
-          <CardContent className="p-8">
-            <div className="text-center mb-8">
-              <div className={`inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br ${getScoreColor(parseFloat(score))} text-white rounded-full text-3xl font-bold mb-4 shadow-lg`}>
-                {score}
-              </div>
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Shield className="w-5 h-5 text-purple-600" />
-                <h3 className="text-xl font-bold">AI TrustScore: {score} / 10</h3>
-              </div>
-              <div className="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium mb-4">
-                {getScoreText(parseFloat(score))}
-              </div>
-              {summary && (
-                <p className="text-gray-600 max-w-2xl mx-auto">{summary}</p>
-              )}
-            </div>
+  const scoreMetrics = [
+    { name: "Legitimacy", score: 8.5, color: "from-purple-500 to-purple-600" },
+    { name: "Transparency", score: 7.2, color: "from-orange-400 to-orange-500" },
+    { name: "Customer Feedback", score: 6.8, color: "from-purple-400 to-orange-400" },
+    { name: "Service Quality", score: 8.1, color: "from-purple-500 to-purple-600" },
+    { name: "Responsiveness", score: 7.9, color: "from-orange-400 to-orange-500" },
+    { name: "Refund Policies", score: 6.5, color: "from-purple-400 to-orange-400" },
+    { name: "Website Credibility", score: 8.7, color: "from-purple-500 to-purple-600" },
+    { name: "Trusted Platforms", score: 9.1, color: "from-purple-600 to-purple-800" },
+  ]
 
-            <div className="space-y-4">
-              <h4 className="font-semibold text-lg mb-4">Score Breakdown</h4>
-              {breakdown.map((metric, index) => (
-                <AnimatedScoreWithBar
-                  key={index}
-                  name={metric.name}
-                  targetScore={metric.score}
-                  getScoreColor={getScoreColor}
-                  duration={6000}
-                />
-              ))}
+  if (showThankYou) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 flex items-center justify-center px-4">
+        <Card className="max-w-2xl w-full bg-white/10 backdrop-blur-sm border-purple-600/30 shadow-2xl shadow-orange-500/20">
+          <CardContent className="p-12 text-center">
+            <div className="mb-8">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-full mb-6 shadow-lg shadow-green-500/30">
+                <CheckCircle2 className="w-10 h-10" />
+              </div>
+              <h1 className="text-4xl font-bold text-white mb-4">Thank You!</h1>
+              <p className="text-xl text-purple-200 leading-relaxed">
+                We'll analyze your digital presence and send your report within 24 hours
+              </p>
             </div>
+            <div className="bg-white/5 rounded-lg p-6 border border-purple-400/20">
+              <p className="text-white whitespace-pre-wrap text-left text-sm mt-4">
+                <strong>AI Analysis:</strong><br />
+                {result}
+              </p>
+            </div>
+            <Button
+              onClick={() => setShowThankYou(false)}
+              className="mt-8 bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 text-white font-semibold py-3 px-8 shadow-lg"
+            >
+              Back to Form
+            </Button>
           </CardContent>
         </Card>
-
-        {/* What's Included Section */}
-        <Card className="mb-8">
-  <CardHeader>
-    <CardTitle className="text-center"><h2>What's Included in Your Report</h2></CardTitle>
-  </CardHeader>
-  <CardContent>
-    <div 
-    className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8"
-    style={{ fontSize: "0.95rem" }}  // Slightly smaller text
-  >
-    <div style={{ flex: 1 }}>
-      <h4 style={{ fontWeight: 600, marginBottom: 4 }}>Detailed Score Analysis</h4>
-      <p style={{ color: "#4B5563", fontSize: "0.85rem" }}>
-        In-depth breakdown of all 8 trust categories
-      </p>
-    </div>
-    <div style={{ flex: 1 }}>
-      <h4 style={{ fontWeight: 600, marginBottom: 4 }}>Actionable Recommendations</h4>
-      <p style={{ color: "#4B5563", fontSize: "0.85rem" }}>
-        Specific steps to improve your scores
-      </p>
-    </div>
-    <div style={{ flex: 1 }}>
-      <h4 style={{ fontWeight: 600, marginBottom: 4 }}>Implementation Timeline</h4>
-      <p style={{ color: "#4B5563", fontSize: "0.85rem" }}>
-        Priority roadmap for trust improvements
-      </p>
-    </div>
-  </div>
-
-    {/* Form moved here */}
-    {!submitSuccess ? (
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={handleSubmit}>
-        <div>
-          <Label htmlFor="name">Name *</Label>
-          <Input
-            id="name"
-            type="text"
-            required
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            disabled={isSubmitting}
-          />
-        </div>
-        <div>
-          <Label htmlFor="email">Email *</Label>
-          <Input
-            id="email"
-            type="email"
-            required
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            disabled={isSubmitting}
-          />
-        </div>
-        <div className="md:col-span-2 mt-4">
-          <Button
-            type="submit"
-            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Get Detailed Report"}
-          </Button>
-        </div>
-      </form>
-    ) : (
-      <div className="text-center py-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4">
-          <CheckCircle className="w-8 h-8" />
-        </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Thank you!</h3>
-        <p className="text-gray-600 mb-4">
-          Your detailed report request has been submitted successfully.
-        </p>
-        <Button
-          onClick={() => setSubmitSuccess(false)}
-          variant="outline"
-          className="mt-4"
-        >
-          Submit Another Request
-        </Button>
       </div>
-    )}
-  </CardContent>
-</Card>
+    )
+  }
 
-
-        
-      </div>
-    </div>
-  )
-}
-
-// Main exported component with Suspense wrapper
-export default function ResultPage() {
   return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <ResultContent />
-    </Suspense>
+    <div className="min-h-screen bg-white">
+      {loading && <LoadingScreen />}
+
+      <div className="container mx-auto px-4 py-5 min-h-[40vh]">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-5">
+            <div className="inline-flex items-center gap-2 mb-4 animate-bounce">
+              <BarChart3 className="w-6 h-6 text-gray" />
+              <h1 className="text-gray-800 text-xl">AI Trustscore Report</h1>
+            </div>
+            <CardTitle className="text-gray text-center">
+              <Typewriter
+                words={[
+                  "People don't ask Google.",
+                  "They ask AI.. ",
+                  "Wanna see what it thinks?",
+                ]}
+                loop={0}
+                cursor
+                cursorStyle="_"
+                typeSpeed={70}
+                deleteSpeed={50}
+                delaySpeed={1500}
+              />
+            </CardTitle>
+          </div>
+
+          <Card className="border border-purple-400/30 shadow-xl rounded-2xl shadow-purple-300">
+            <CardContent className="pt-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Label htmlFor="website" className="text-black font-medium mb-1 block">Website URL</Label>
+                  <div className="flex rounded-lg overflow-hidden shadow-sm border border-purple-300 bg-white">
+                    <span className="px-4 flex items-center text-gray-600 bg-white-100 border-r border-purple-300">https://</span>
+                    <Input
+                      id="website"
+                      name="website"
+                      type="text"
+                      placeholder="yourdomain.com"
+                      value={formData.website.replace(/^https?:\/\//, "")}
+                      onChange={handleInputChange}
+                      required
+                      disabled={loading}
+                      className="w-full p-4 text-gray-800 focus:outline-none bg-white disabled:opacity-50"
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 text-white font-semibold py-4 px-8 text-lg shadow-md transform transition-all duration-200 ease-out rounded-lg"
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Analyzing...
+                    </div>
+                  ) : (
+                    "Get AI Trustscore"
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <div className="bg-gray-50 py-4">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Sample Report Preview</h2>
+              <p className="text-gray-600 text-sm">Here's what your AI TrustScore report will look like</p>
+            </div>
+
+            <Card className="mb-8 shadow-2xl shadow-purple-500/20 border-purple-200/50 bg-gradient-to-br from-white to-purple-50/30">
+              <CardContent className="p-8">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 text-white rounded-full text-3xl font-bold mb-4 shadow-lg shadow-purple-500/30">7.5</div>
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Shield className="w-5 h-5 text-purple-600" />
+                    <h3 className="text-xl font-bold">AI TrustScore: 7.5 / 10</h3>
+                  </div>
+                  <p className="text-gray-600">Comprehensive analysis of your digital trustworthiness</p>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg mb-4">Score Breakdown</h4>
+                  {scoreMetrics.map((metric, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{metric.name}</span>
+                        <span className="text-sm font-semibold">{metric.score}/10</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                        <div
+                          className={`h-full bg-gradient-to-r ${metric.color} transition-all duration-500 ease-out`}
+                          style={{ width: `${metric.score * 10}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-center"><h2>What's Included in Your Report</h2></CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                      <div>
+                        <h4 className="font-semibold">Detailed Score Analysis</h4>
+                        <p className="text-sm text-gray-600">In-depth breakdown of all 8 trust categories</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                      <div>
+                        <h4 className="font-semibold">Competitive Benchmarking</h4>
+                        <p className="text-sm text-gray-600">See how you compare to industry standards</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                      <div>
+                        <h4 className="font-semibold">Actionable Recommendations</h4>
+                        <p className="text-sm text-gray-600">Specific steps to improve your scores</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                      <div>
+                        <h4 className="font-semibold">Implementation Timeline</h4>
+                        <p className="text-sm text-gray-600">Priority roadmap for trust improvements</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      <footer className="bg-purple-900 py-8">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-purple-200">Get insights into your digital trustworthiness and AI visibility</p>
+          <p className="text-purple-300 text-sm mt-2">Copyright by <Link href="https://www.brainito.com/">Brainito.com</Link></p>
+        </div>
+      </footer>
+    </div>
   )
 }
