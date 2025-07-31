@@ -238,109 +238,92 @@ function ResultContent() {
 
         {/* What's Included Section */}
         <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-center"><h2>What's Included in Your Report</h2></CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
-                  <div>
-                    <h4 className="font-semibold">Detailed Score Analysis</h4>
-                    <p className="text-sm text-gray-600">In-depth breakdown of all 8 trust categories</p>
-                  </div>
-                </div>
-                
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
-                  <div>
-                    <h4 className="font-semibold">Actionable Recommendations</h4>
-                    <p className="text-sm text-gray-600">Specific steps to improve your scores</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
-                  <div>
-                    <h4 className="font-semibold">Implementation Timeline</h4>
-                    <p className="text-sm text-gray-600">Priority roadmap for trust improvements</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+  <CardHeader>
+    <CardTitle className="text-center"><h2>What's Included in Your Report</h2></CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div 
+    className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8"
+    style={{ fontSize: "0.95rem" }}  // Slightly smaller text
+  >
+    <div style={{ flex: 1 }}>
+      <h4 style={{ fontWeight: 600, marginBottom: 4 }}>Detailed Score Analysis</h4>
+      <p style={{ color: "#4B5563", fontSize: "0.85rem" }}>
+        In-depth breakdown of all 8 trust categories
+      </p>
+    </div>
+    <div style={{ flex: 1 }}>
+      <h4 style={{ fontWeight: 600, marginBottom: 4 }}>Actionable Recommendations</h4>
+      <p style={{ color: "#4B5563", fontSize: "0.85rem" }}>
+        Specific steps to improve your scores
+      </p>
+    </div>
+    <div style={{ flex: 1 }}>
+      <h4 style={{ fontWeight: 600, marginBottom: 4 }}>Implementation Timeline</h4>
+      <p style={{ color: "#4B5563", fontSize: "0.85rem" }}>
+        Priority roadmap for trust improvements
+      </p>
+    </div>
+  </div>
 
-        {/* Want a detailed report form */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center">
-              {submitSuccess ? "Request Submitted!" : "Want a Detailed Report?"}
-            </CardTitle>
-            <p className="text-center text-gray-600">
-              {submitSuccess 
-                ? "We'll send you a comprehensive analysis within 24 hours"
-                : "Get personalized recommendations and implementation strategies"
-              }
-            </p>
-          </CardHeader>
-          <CardContent>
-            {submitSuccess ? (
-              <div className="text-center py-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4">
-                  <CheckCircle className="w-8 h-8" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Thank you!</h3>
-                <p className="text-gray-600 mb-4">
-                  Your detailed report request has been submitted successfully.
-                </p>
-                <Button 
-                  onClick={() => setSubmitSuccess(false)}
-                  variant="outline"
-                  className="mt-4"
-                >
-                  Submit Another Request
-                </Button>
-              </div>
-            ) : (
-              <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={handleSubmit}>
-                <div>
-                  <Label htmlFor="name">Name *</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    disabled={isSubmitting}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    disabled={isSubmitting}
-                  />
-                </div>
-                <div className="md:col-span-2 mt-4">
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Submitting..." : "Get Detailed Report"}
-                  </Button>
-                </div>
-              </form>
-            )}
-          </CardContent>
-        </Card>
+    {/* Form moved here */}
+    {!submitSuccess ? (
+      <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={handleSubmit}>
+        <div>
+          <Label htmlFor="name">Name *</Label>
+          <Input
+            id="name"
+            type="text"
+            required
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            disabled={isSubmitting}
+          />
+        </div>
+        <div>
+          <Label htmlFor="email">Email *</Label>
+          <Input
+            id="email"
+            type="email"
+            required
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            disabled={isSubmitting}
+          />
+        </div>
+        <div className="md:col-span-2 mt-4">
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Get Detailed Report"}
+          </Button>
+        </div>
+      </form>
+    ) : (
+      <div className="text-center py-8">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4">
+          <CheckCircle className="w-8 h-8" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Thank you!</h3>
+        <p className="text-gray-600 mb-4">
+          Your detailed report request has been submitted successfully.
+        </p>
+        <Button
+          onClick={() => setSubmitSuccess(false)}
+          variant="outline"
+          className="mt-4"
+        >
+          Submit Another Request
+        </Button>
+      </div>
+    )}
+  </CardContent>
+</Card>
+
+
+        
       </div>
     </div>
   )
