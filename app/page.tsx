@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Shield, BarChart3, CheckCircle, CheckCircle2, Loader2 } from "lucide-react"
+import { Shield, BarChart3, CheckCircle, CheckCircle2, Loader2, ChevronDown, ChevronUp } from "lucide-react"
 import Hotjar from "@hotjar/browser"
 import { Typewriter } from "react-simple-typewriter"
 
@@ -69,6 +69,7 @@ export default function AITrustScorePage() {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({ website: "" })
   const [showThankYou, setShowThankYou] = useState(false)
+  const [showSampleReport, setShowSampleReport] = useState(false)
 
   useEffect(() => {
     Hotjar.init(6475273, 6)
@@ -166,7 +167,7 @@ export default function AITrustScorePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       {loading && <LoadingScreen />}
 
       <div className="container mx-auto px-4 py-5 min-h-[40vh]">
@@ -234,91 +235,110 @@ export default function AITrustScorePage() {
         </div>
       </div>
 
-      <div className="bg-gray-50 py-4">
+      {/* Sample Report Preview Section with Collapsible Design */}
+      <div className="bg-gray-50 py-6 flex-1">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Sample Report Preview</h2>
-              <p className="text-gray-600 text-sm">Here's what your AI TrustScore report will look like</p>
+            {/* Collapsible Header */}
+            <div className="text-center mb-6">
+              <button
+                onClick={() => setShowSampleReport(!showSampleReport)}
+                className="group inline-flex items-center gap-2 bg-white hover:bg-purple-50 transition-all duration-300 rounded-lg px-4 py-2 shadow-md border border-purple-200 hover:border-purple-300"
+              >
+                <h2 className="text-lg font-semibold text-gray-900">Sample Report Preview</h2>
+                <div className={`transform transition-transform duration-300 ${showSampleReport ? 'rotate-180' : ''}`}>
+                  <ChevronDown className="w-4 h-4 text-purple-600 group-hover:text-purple-700" />
+                </div>
+              </button>
+              <p className="text-gray-600 text-sm mt-2">Click to see what your AI TrustScore report will look like</p>
             </div>
 
-            <Card className="mb-8 shadow-2xl shadow-purple-500/20 border-purple-200/50 bg-gradient-to-br from-white to-purple-50/30">
-              <CardContent className="p-8">
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 text-white rounded-full text-3xl font-bold mb-4 shadow-lg shadow-purple-500/30">7.5</div>
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <Shield className="w-5 h-5 text-purple-600" />
-                    <h3 className="text-xl font-bold">AI TrustScore: 7.5 / 10</h3>
-                  </div>
-                  <p className="text-gray-600">Comprehensive analysis of your digital trustworthiness</p>
-                </div>
+            {/* Collapsible Content */}
+            <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
+              showSampleReport 
+                ? 'max-h-[2000px] opacity-100 transform translate-y-0' 
+                : 'max-h-0 opacity-0 transform -translate-y-4'
+            }`}>
+              <div className="space-y-8 pb-8">
+                <Card className="shadow-2xl shadow-purple-500/20 border-purple-200/50 bg-gradient-to-br from-white to-purple-50/30 transform transition-all duration-500">
+                  <CardContent className="p-8">
+                    <div className="text-center mb-8">
+                      <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 text-white rounded-full text-3xl font-bold mb-4 shadow-lg shadow-purple-500/30">7.5</div>
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <Shield className="w-5 h-5 text-purple-600" />
+                        <h3 className="text-xl font-bold">AI TrustScore: 7.5 / 10</h3>
+                      </div>
+                      <p className="text-gray-600">Comprehensive analysis of your digital trustworthiness</p>
+                    </div>
 
-                <div className="space-y-4">
-                  <h4 className="font-semibold text-lg mb-4">Score Breakdown</h4>
-                  {scoreMetrics.map((metric, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">{metric.name}</span>
-                        <span className="text-sm font-semibold">{metric.score}/10</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                        <div
-                          className={`h-full bg-gradient-to-r ${metric.color} transition-all duration-500 ease-out`}
-                          style={{ width: `${metric.score * 10}%` }}
-                        />
-                      </div>
+                    <div className="space-y-4">
+                      <h4 className="font-semibold text-lg mb-4">Score Breakdown</h4>
+                      {scoreMetrics.map((metric, index) => (
+                        <div key={index} className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="font-medium">{metric.name}</span>
+                            <span className="text-sm font-semibold">{metric.score}/10</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                            <div
+                              className={`h-full bg-gradient-to-r ${metric.color} transition-all duration-500 ease-out`}
+                              style={{ width: `${metric.score * 10}%` }}
+                            />
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-center"><h2>What's Included in Your Report</h2></CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
-                      <div>
-                        <h4 className="font-semibold">Detailed Score Analysis</h4>
-                        <p className="text-sm text-gray-600">In-depth breakdown of all 8 trust categories</p>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-center"><h2>What's Included in Your Report</h2></CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                          <div>
+                            <h4 className="font-semibold">Detailed Score Analysis</h4>
+                            <p className="text-sm text-gray-600">In-depth breakdown of all 8 trust categories</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                          <div>
+                            <h4 className="font-semibold">Competitive Benchmarking</h4>
+                            <p className="text-sm text-gray-600">See how you compare to industry standards</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                          <div>
+                            <h4 className="font-semibold">Actionable Recommendations</h4>
+                            <p className="text-sm text-gray-600">Specific steps to improve your scores</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
+                          <div>
+                            <h4 className="font-semibold">Implementation Timeline</h4>
+                            <p className="text-sm text-gray-600">Priority roadmap for trust improvements</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
-                      <div>
-                        <h4 className="font-semibold">Competitive Benchmarking</h4>
-                        <p className="text-sm text-gray-600">See how you compare to industry standards</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
-                      <div>
-                        <h4 className="font-semibold">Actionable Recommendations</h4>
-                        <p className="text-sm text-gray-600">Specific steps to improve your scores</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-purple-600 mt-1" />
-                      <div>
-                        <h4 className="font-semibold">Implementation Timeline</h4>
-                        <p className="text-sm text-gray-600">Priority roadmap for trust improvements</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <footer className="bg-purple-900 py-8">
+      <footer className="bg-purple-900 py-8 mt-auto">
         <div className="container mx-auto px-4 text-center">
           <p className="text-purple-200">Get insights into your digital trustworthiness and AI visibility</p>
           <p className="text-purple-300 text-sm mt-2">Copyright by <Link href="https://www.brainito.com/">Brainito.com</Link></p>
