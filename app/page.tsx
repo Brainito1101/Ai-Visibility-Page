@@ -167,9 +167,9 @@ export default function AITrustScorePage() {
   }
 
   return (
-    <div className="overflow-hidden bg-white flex flex-col justify-between">
+    <div className="min-h-screen bg-white flex flex-col">
       {loading && <LoadingScreen />}
-
+    <div className="flex-1">
       <div className="container mx-auto px-4 py-5 min-h-[40vh]">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-5">
@@ -234,9 +234,10 @@ export default function AITrustScorePage() {
           </Card>
         </div>
       </div>
+      </div>
 
       {/* Sample Report Preview Section with Collapsible Design */}
-      <div className="bg-gray-50 py-6 flex-1">
+      <div className="bg-gray-50 py-6">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Collapsible Header */}
@@ -338,10 +339,20 @@ export default function AITrustScorePage() {
         </div>
       </div>
 
-      <footer className="bg-purple-900 py-2 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-purple-200">Get insights into your digital trustworthiness and AI visibility</p>
-          <p className="text-purple-300 text-sm mt-2">Copyright by <Link href="https://www.brainito.com/">Brainito.com</Link></p>
+      <footer className="bg-purple-900 py-4 px-4 mt-auto">
+        <div className="container mx-auto text-center">
+          <p className="text-purple-200 text-sm sm:text-base mb-2">
+            Get insights into your digital trustworthiness and AI visibility
+          </p>
+          <p className="text-purple-300 text-xs sm:text-sm">
+            Copyright by{" "}
+            <Link 
+              href="https://www.brainito.com/" 
+              className="hover:text-purple-100 transition-colors underline"
+            >
+              Brainito.com
+            </Link>
+          </p>
         </div>
       </footer>
     </div>
