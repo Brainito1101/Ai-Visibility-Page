@@ -167,7 +167,7 @@ export default function AITrustScorePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h bg-white flex flex-col">
       {loading && <LoadingScreen />}
     <div className="flex-1">
       <div className="container mx-auto px-4 py-5 min-h-[40vh]">
@@ -339,7 +339,10 @@ export default function AITrustScorePage() {
         </div>
       </div>
 
-      <footer className="bg-purple-900 py-4 px-4 mt-auto">
+      <div className="pt-4 mt-4"></div>
+      <div className="pt-4"></div>
+
+      <footer className="bg-purple-900 py-4 px-4 mt-auto pt-4 mt-4">
         <div className="container mx-auto text-center">
           <p className="text-purple-200 text-sm sm:text-base mb-2">
             Get insights into your digital trustworthiness and AI visibility
