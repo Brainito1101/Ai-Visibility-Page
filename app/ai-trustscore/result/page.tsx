@@ -239,7 +239,7 @@ function ResultContent() {
         {/* What's Included Section */}
         <Card className="mb-8">
   <CardHeader>
-    <CardTitle className="text-center"><h2>What's Included in Your Report</h2></CardTitle>
+    <CardTitle className="text-center"><h2>Get Custom AI Visibility Report</h2></CardTitle>
   </CardHeader>
   <CardContent>
     <div 
