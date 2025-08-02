@@ -87,7 +87,7 @@ export default function AITrustScorePage() {
     const cleanedURL = `https://${formData.website.replace(/^https?:\/\//, "")}`
 
     try {
-      const res = await fetch("https://ai-report-backend-vdvj.onrender.com/api/analyze/", {
+      const res = await fetch("https://ai.brainito.com/api/analyze/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ website: cleanedURL }),
