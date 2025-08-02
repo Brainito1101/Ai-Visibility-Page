@@ -171,7 +171,7 @@ function ResultContent() {
     setIsSubmitting(true)
 
     try {
-      const res = await fetch("https://ai-report-backend-vdvj.onrender.com/api/request-report/", {
+      const res = await fetch("https://ai.brainito.com/api/request-report/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
