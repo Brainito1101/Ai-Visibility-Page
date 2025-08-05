@@ -124,7 +124,7 @@ function ResultContent() {
   const aiVisibilityScore = params.get("ai_visibility_score") || "7.0"
   const aiVisibilityNotes = params.get("ai_visibility_notes") || ""
   
-  const [formData, setFormData] = useState({ name: "", email: "" })
+  const [formData, setFormData] = useState({ name: "", number: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
@@ -179,7 +179,7 @@ function ResultContent() {
         body: JSON.stringify({
           analysis_id: analysisId,
           name: formData.name,
-          email: formData.email,
+          number: formData.number,
         }),
       })
 
@@ -187,7 +187,7 @@ function ResultContent() {
 
       if (data.success) {
         setSubmitSuccess(true)
-        setFormData({ name: "", email: "" })
+        setFormData({ name: "", number: "" })
       } else {
         alert(data.error || "Failed to submit request. Please try again.")
       }
@@ -281,13 +281,13 @@ function ResultContent() {
           />
         </div>
         <div>
-          <Label htmlFor="email">Email *</Label>
+          <Label htmlFor="number">Number *</Label>
           <Input
-            id="email"
-            type="email"
+            id="number"
+            type="number"
             required
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            value={formData.number}
+            onChange={(e) => setFormData({ ...formData, number: e.target.value })}
             disabled={isSubmitting}
           />
         </div>

@@ -11,7 +11,7 @@ import { Shield, BarChart3, CheckCircle, CheckCircle2, Loader2, ChevronDown, Che
 import Hotjar from "@hotjar/browser"
 import { Typewriter } from "react-simple-typewriter"
 
-// ✅ Redesigned LoadingScreen Component
+// ? Redesigned LoadingScreen Component
 const LoadingScreen = () => {
   const [progress, setProgress] = useState(0)
 
@@ -30,9 +30,11 @@ const LoadingScreen = () => {
   }, [])
 
   const getStatus = () => {
-    if (progress < 30) return "Scanning website structure..."
-    if (progress < 70) return "Analyzing trust signals..."
-    if (progress < 90) return "Generating trust score..."
+    if (progress < 25) return "Scanning your digital glow-up..."
+    if (progress < 40) return "Counting stars, review style..."
+    if (progress < 70) return "Sniffing out press mentions..."
+    if (progress < 80) return "Peeking at your refund drama..."
+    if (progress < 95) return "Rating your wow factor..."
     return "Finalizing..."
   }
 
@@ -67,7 +69,9 @@ export default function AITrustScorePage() {
   const router = useRouter()
   const [result, setResult] = useState("")
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({ website: "" })
+  const [formData, setFormData] = useState({ website: "", email: "" })
+  const [isWebsiteValid, setIsWebsiteValid] = useState<boolean | null>(null);
+  const [isEmailValid, setIsEmailValid] = useState<boolean | null>(null);
   const [showThankYou, setShowThankYou] = useState(false)
   const [showSampleReport, setShowSampleReport] = useState(false)
 
@@ -75,22 +79,76 @@ export default function AITrustScorePage() {
     Hotjar.init(6475273, 6)
   }, [])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+  function extractDomain(input: string): string {
+  try {
+    // If user includes https:// or http://, remove it
+    let cleaned = input.trim().replace(/^https?:\/\//, "");
+    // Remove trailing slashes or www if needed
+    cleaned = cleaned.replace(/^www\./, "").replace(/\/.*$/, "");
+    return cleaned;
+  } catch {
+    return input;
+  }
+}
+
+const validateWebsite = async (domain: string) => {
+  const cleaned = extractDomain(domain);
+  try {
+    const res = await fetch(`https://dns.google/resolve?name=${cleaned}&type=A`);
+    const data = await res.json();
+    setIsWebsiteValid(!!data.Answer);
+  } catch {
+    setIsWebsiteValid(false);
+  }
+};
+
+const validateEmail = async (email: string) => {
+  if (!email.includes("@")) {
+    setIsEmailValid(false);
+    return;
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setLoading(true)
-    setShowThankYou(false)
+  try {
+    const res = await fetch(`https://apilayer.net/api/check?access_key=49e053f4eb99c40e4081d96712cb8969&email=${email}`);
+    const data = await res.json();
+    setIsEmailValid(data?.smtp_check === true || data?.format_valid === true);
+  } catch {
+    setIsEmailValid(false);
+  }
+};
 
-    const cleanedURL = `https://${formData.website.replace(/^https?:\/\//, "")}`
+
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+  let cleanedValue = value;
+
+  if (name === "website") {
+    cleanedValue = extractDomain(value);
+    validateWebsite(cleanedValue);
+  }
+
+  if (name === "email") {
+    validateEmail(value);
+  }
+
+  setFormData((prev) => ({ ...prev, [name]: cleanedValue }));
+};
+
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setLoading(true);
+  setShowThankYou(false);
+
+  const cleanedURL = `https://${extractDomain(formData.website)}`;
 
     try {
       const res = await fetch("https://ai.brainito.com/api/analyze/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ website: cleanedURL }),
+        body: JSON.stringify({ 
+  website: cleanedURL,
+  email: formData.email.trim()
+}),
       })
 
       const data = await res.json()
@@ -213,11 +271,30 @@ export default function AITrustScorePage() {
                       className="w-full p-4 text-gray-800 focus:outline-none bg-white disabled:opacity-50"
                     />
                   </div>
+                   {isWebsiteValid === false && <p className="text-red-500 text-sm mt-1">⚠️ Website not reachable.</p>}
+    {isWebsiteValid === true && <p className="text-green-600 text-sm mt-1">✅ Website is live.</p>}
                 </div>
+
+                <div>
+  <Label htmlFor="email" className="text-black font-medium mb-1 block">Email Address</Label>
+  <Input
+    id="email"
+    name="email"
+    type="email"
+    placeholder="you@example.com"
+    value={formData.email}
+    onChange={handleInputChange}
+    required
+    disabled={loading}
+    className="w-full p-4 text-gray-800 focus:outline-none bg-white disabled:opacity-50 border border-purple-300 rounded-lg"
+  />
+  {isEmailValid === false && <p className="text-red-500 text-sm mt-1">⚠️ Invalid or unreachable email address.</p>}
+    {isEmailValid === true && <p className="text-green-600 text-sm mt-1">✅ Email looks valid.</p>}
+</div>
 
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || isWebsiteValid === false || isEmailValid === false}
                   className="w-full bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 text-white font-semibold py-4 px-8 text-lg shadow-md transform transition-all duration-200 ease-out rounded-lg"
                 >
                   {loading ? (
