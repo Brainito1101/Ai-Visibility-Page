@@ -70,8 +70,6 @@ export default function AITrustScorePage() {
   const [result, setResult] = useState("")
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({ website: "", email: "" })
-  const [isWebsiteValid, setIsWebsiteValid] = useState<boolean | null>(null);
-  const [isEmailValid, setIsEmailValid] = useState<boolean | null>(null);
   const [showThankYou, setShowThankYou] = useState(false)
   const [showSampleReport, setShowSampleReport] = useState(false)
 
@@ -91,47 +89,10 @@ export default function AITrustScorePage() {
   }
 }
 
-const validateWebsite = async (domain: string) => {
-  const cleaned = extractDomain(domain);
-  try {
-    const res = await fetch(`https://dns.google/resolve?name=${cleaned}&type=A`);
-    const data = await res.json();
-    setIsWebsiteValid(!!data.Answer);
-  } catch {
-    setIsWebsiteValid(false);
-  }
-};
-
-const validateEmail = async (email: string) => {
-  if (!email.includes("@")) {
-    setIsEmailValid(false);
-    return;
-  }
-
-  try {
-    const res = await fetch(`https://apilayer.net/api/check?access_key=49e053f4eb99c40e4081d96712cb8969&email=${email}`);
-    const data = await res.json();
-    setIsEmailValid(data?.smtp_check === true || data?.format_valid === true);
-  } catch {
-    setIsEmailValid(false);
-  }
-};
-
 
 const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const { name, value } = e.target;
-  let cleanedValue = value;
-
-  if (name === "website") {
-    cleanedValue = extractDomain(value);
-    validateWebsite(cleanedValue);
-  }
-
-  if (name === "email") {
-    validateEmail(value);
-  }
-
-  setFormData((prev) => ({ ...prev, [name]: cleanedValue }));
+  setFormData((prev) => ({ ...prev, [name]: value }));
 };
 
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -271,8 +232,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                       className="w-full p-4 text-gray-800 focus:outline-none bg-white disabled:opacity-50"
                     />
                   </div>
-                   {isWebsiteValid === false && <p className="text-red-500 text-sm mt-1">⚠️ Website not reachable.</p>}
-    {isWebsiteValid === true && <p className="text-green-600 text-sm mt-1">✅ Website is live.</p>}
+                   
                 </div>
 
                 <div>
@@ -288,13 +248,12 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     disabled={loading}
     className="w-full p-4 text-gray-800 focus:outline-none bg-white disabled:opacity-50 border border-purple-300 rounded-lg"
   />
-  {isEmailValid === false && <p className="text-red-500 text-sm mt-1">⚠️ Invalid or unreachable email address.</p>}
-    {isEmailValid === true && <p className="text-green-600 text-sm mt-1">✅ Email looks valid.</p>}
+
 </div>
 
                 <Button
                   type="submit"
-                  disabled={loading || isWebsiteValid === false || isEmailValid === false}
+                  disabled={loading}
                   className="w-full bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 text-white font-semibold py-4 px-8 text-lg shadow-md transform transition-all duration-200 ease-out rounded-lg"
                 >
                   {loading ? (
